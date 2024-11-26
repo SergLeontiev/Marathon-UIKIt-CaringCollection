@@ -9,7 +9,7 @@ import UIKit
 
 class CustomCollectionViewLayout: UICollectionViewLayout {
     let itemSize = CGSize(width: 250, height: 350)
-    let spacing: CGFloat = 8
+    let spacing: CGFloat = 10
     private var cellLayoutAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
     
     override func invalidateLayout() {
@@ -57,7 +57,7 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
     }
     
     private func originForItem(at index: Int) -> CGPoint {
-        let x = itemSize.width * CGFloat(index) + spacing * CGFloat(index + 1)
+        let x = itemSize.width * CGFloat(index) + spacing * CGFloat(index)
         return CGPoint(x: x, y: 75)
     }
 }

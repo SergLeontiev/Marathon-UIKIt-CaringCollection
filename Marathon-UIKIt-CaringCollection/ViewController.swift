@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = CustomCollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.preservesSuperviewLayoutMargins = true
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
@@ -39,6 +40,11 @@ class ViewController: UIViewController {
         
         collectionView.reloadData()
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.contentInset.left = collectionView.layoutMargins.left
+    }
 }
 
 extension ViewController: UICollectionViewDataSource {
@@ -58,9 +64,7 @@ extension ViewController: UICollectionViewDataSource {
     }
 }
 
-extension ViewController: UICollectionViewDelegate {}
-
-extension ViewController: UIScrollViewDelegate {
+extension ViewController: UICollectionViewDelegate {
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard let layout = collectionView.collectionViewLayout as? CustomCollectionViewLayout else { return }
         
@@ -77,7 +81,8 @@ extension ViewController: UIScrollViewDelegate {
             }
         }()
         
-        let newOffset = index * cellWidth - collectionView.layoutMargins.left
-        targetContentOffset.pointee = CGPoint(x: max(newOffset, 0), y: targetContentOffset.pointee.y)
+        let leftInset = collectionView.layoutMargins.left
+        let newOffset = index * cellWidth - leftInset
+        targetContentOffset.pointee = CGPoint(x: max(newOffset, -leftInset), y: targetContentOffset.pointee.y)
     }
 }
