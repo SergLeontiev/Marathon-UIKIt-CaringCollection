@@ -8,7 +8,10 @@
 import UIKit
 
 class ViewController: UIViewController {
-    private let colors: [UIColor] = [.systemRed, .systemBlue, .systemGreen, .systemYellow, .systemPurple, .systemTeal, .systemOrange, .systemPink]
+    private let colors: [UIColor] = [
+        .systemRed, .systemBlue, .systemGreen, .systemYellow, .systemPurple, .systemTeal,
+        .systemOrange, .systemPink, .systemCyan, .systemFill, .systemMint, .systemBrown
+    ]
     private lazy var collectionView: UICollectionView = {
         let layout = CustomCollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -29,7 +32,7 @@ class ViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
@@ -56,3 +59,25 @@ extension ViewController: UICollectionViewDataSource {
 }
 
 extension ViewController: UICollectionViewDelegate {}
+
+extension ViewController: UIScrollViewDelegate {
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        guard let layout = collectionView.collectionViewLayout as? CustomCollectionViewLayout else { return }
+        
+        let cellWidth = layout.itemSize.width + layout.spacing
+        
+        let index: CGFloat = {
+            let estimatedIndex = targetContentOffset.pointee.x / cellWidth
+            if velocity.x > 0 {
+                return ceil(estimatedIndex)
+            } else if velocity.x < 0 {
+                return floor(estimatedIndex)
+            } else {
+               return round(estimatedIndex)
+            }
+        }()
+        
+        let newOffset = index * cellWidth - collectionView.layoutMargins.left
+        targetContentOffset.pointee = CGPoint(x: max(newOffset, 0), y: targetContentOffset.pointee.y)
+    }
+}

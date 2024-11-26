@@ -8,10 +8,8 @@
 import UIKit
 
 class CustomCollectionViewLayout: UICollectionViewLayout {
-    private let itemSize = CGSize(width: 250, height: 350)
-    private var spacing: CGFloat {
-        collectionView?.layoutMargins.left ?? 0
-    }
+    let itemSize = CGSize(width: 250, height: 350)
+    let spacing: CGFloat = 8
     private var cellLayoutAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
     
     override func invalidateLayout() {
